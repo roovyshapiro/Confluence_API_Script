@@ -1,3 +1,6 @@
+##https://currentmillis.com/ -> Useful site for time conversions
+##https://jsonformatter.org/json-viewer -> Useful site for parsing JSON
+
 import requests, json, datetime
 from datetime import date, timedelta
 from requests.auth import HTTPBasicAuth
@@ -19,17 +22,17 @@ def conf_test(year=0, month=0, day=0):
     Outpus the following data to a file:
 
     Test User:
-    Test Company
-    (host)/wiki/spaces/Test Company/pages/773095435
+    TestCompany
+    (host)/wiki/spaces/TestCompany/pages/773095435
     2019-04-04 13:18:02
-    Test Company1
-    (host)/wiki/spaces/Test Company1/pages/930316631
+    TestCompany1
+    (host)/wiki/spaces/TestCompany1/pages/930316631
     2019-04-04 13:07:44
-    Test Company2
-    (host)/wiki/spaces/Test Company2/pages/930316651
+    TestCompany2
+    (host)/wiki/spaces/TestCompany2/pages/930316651
     2019-04-04 13:05:17
-    Test Company3
-    (host)/wiki/spaces/Test Company3/pages/466616422/
+    TestCompany3
+    (host)/wiki/spaces/TestCompany3/pages/466616422/
     2019-04-04 13:03:41
     Total Updates: 4
 
@@ -39,13 +42,11 @@ def conf_test(year=0, month=0, day=0):
     api_key = "padVOcwy3jty3O2BsyNHxSI5"
 
     ##Confluence uses unix epoch time stamps which is milliseconds seconds Jan, 1st 1970.
-    ##https://currentmillis.com/ -> Useful site for conversions
     ##1 second = 1000 milliseconds
     ##1 day = 86400 seconds
     ##7 days = 604,800 seconds
     ##7 days = 604,800,000 milliseconds
     ##14 days = 1,209,600
-
     ##14 days = 1,209,600,000 milliseconds
     #Supply the date and retrieves the timestamp in milliseconds
     #timestamp = int((datetime.datetime(year, month, day, 0, 0).timestamp()) * 1000)
