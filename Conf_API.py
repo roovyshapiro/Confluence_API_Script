@@ -17,7 +17,7 @@ def epoch_convert(timestamp):
     return date_time.strftime(time_format) 
 
 
-def conf_test(year=0, month=0, day=0):
+def conf_test():
     '''
     Outpus the following data to a file:
 
@@ -36,7 +36,7 @@ def conf_test(year=0, month=0, day=0):
     2019-04-04 13:03:41
     Total Updates: 4
 
-    '''
+    
     host = "companyurl.atlassian.net"
     username = "user@companyurl.com"
     api_key = "padVOcwy3jty3O2BsyNHxSI5"
@@ -76,58 +76,142 @@ def conf_test(year=0, month=0, day=0):
     )
 
     data = response.json()
+    '''
 
 ##    data['changeSets'][0]['modifier']['fullName'] = User's Full Name
 ##    data['changeSets'][0]['recentUpdates'][0]['spaceName'] = Company Name / Name of Space
 ##    data['changeSets'][0]['recentUpdates'][0]['urlPath'] = Link to the page
 ##    data['changeSets'][0]['recentUpdates'][0]['lastModificationDate'] = Update Time
 
+    '''
+    #write json data to a file
+    import json
+    myjson = json.dumps(data)
+    with open('dict.json', 'w') as f:
+        f.write(myjson)
+
+    #read json data from file
+    import json
+    with open('dict.json') as f:
+        data = json.load(f)
+
+    #write mod_dates one on each line to a csv file
+    with open('output.csv','w', newline='') as f:
+        writer=csv.writer(f)
+            for x in mod_dates:
+                writer.writerow([epoch_covert(x))])
+
+    with open('mod_dates.csv', 'w') as f:
+        for x in mod_dates:
+            f.write(str(x))
+            f.write('\n')
+
+    >>> mod_dates_prev = []
+                               
+    with open('output.csv') as f:
+        reader = f.read().splitlines()
+            for row in reader:
+                mod_dates_prev.append(row)
+
+        #get a list of all the modification dates:
+        mod_dates = []
+        for x in range(len(data['changeSets'])):
+            for y in range(len(data['changeSets'][x]['recentUpdates'])):
+                mod_dates.append(data['changeSets'][x]['recentUpdates'][y]['lastModificationDate'])
+    '''
+    #read json data from file (used as a test instead of calling the api)
+    host = "companyurl.atlassian.net"
+    with open('dict.json') as f:
+        data = json.load(f)
+        
+    #write json data to a file
+    myjson = json.dumps(data)
+    with open('dict.json', 'w') as f:
+        f.write(myjson)
+
+    #get a list of all the modification dates:
+    mod_dates = []
+    for x in range(len(data['changeSets'])):
+        for y in range(len(data['changeSets'][x]['recentUpdates'])):
+            mod_dates.append(data['changeSets'][x]['recentUpdates'][y]['lastModificationDate'])
+
+    mod_dates_prev = []	   
+    with open('mod_dates.txt') as f:
+        reader = f.read().splitlines()
+        for row in reader:
+            mod_dates_prev.append(row)
+
+    missing_mod_dates = []
+    for x in mod_dates:
+        if str(x) not in mod_dates_prev:
+            missing_mod_dates.append(x)
+    print(missing_mod_dates)    
+    
+    my_dict = {}
     with open('test.txt', 'a') as f:
         for x in range(len(data['changeSets'])):
             name = data['changeSets'][x]['modifier']['fullName'] + ":"
-            f.write(name)
-            f.write('\n')
+            #f.write(name)
+            #f.write('\n')
+            my_dict[name]
             total_updates = 0
             for y in range(len(data['changeSets'][x]['recentUpdates'])):
-                total_updates += 1
-                company = data['changeSets'][x]['recentUpdates'][y]['spaceName']
-                url = host + data['changeSets'][x]['recentUpdates'][y]['urlPath']
-                time = epoch_convert(data['changeSets'][x]['recentUpdates'][y]['lastModificationDate'])
-                f.write(company)
-                f.write('\n')
-                f.write(url)
-                f.write('\n')
-                f.write(time)
-                f.write('\n')
-            f.write("Total Updates: " + str(total_updates))
-            f.write('\n')
+                if data['changeSets'][x]['recentUpdates'][y]['lastModificationDate'] in missing_mod_dates:
+                    total_updates += 1
+                    company = data['changeSets'][x]['recentUpdates'][y]['spaceName']
+                    url = host + data['changeSets'][x]['recentUpdates'][y]['urlPath']
+                    time = data['changeSets'][x]['recentUpdates'][y]['lastModificationDate']
+                    #my_dict[name].append(company)
+                    #my_dict[name].append(url)
+                    my_dict[name].append(epoch_convert(time))
+                            
+##                    f.write(name)
+##                    f.write('\n')
+##                    f.write(company)
+##                    f.write('\n')
+##                    f.write(url)
+##                    f.write('\n')
+##                    f.write(epoch_convert(time))
+##                    f.write('\n\n')
+##            f.write("Total Updates: " + str(total_updates))
+##            f.write('\n')
+##            f.write('\n')
+    print(my_dict)
+
+
+    with open('mod_dates.txt', 'w') as f:
+        for x in mod_dates:
+            f.write(str(x))
             f.write('\n')
 
     return ''
 
-def time_diff(year, month, day):
-    '''
-    subtract the current date by 7 days.
-    dt = date.today() - timedelta(7)
-    >>>dt
-    datetime.date(2019, 4, 3)
-    >>>str(dt).split('-')
-    ['2019', '04', '03']
+conf_test()
 
-    >>>str(date.today()).split('-')
-    ['2019', '04', '04']
-    >>>str(date.today() - timedelta(7)).split('-')
-    ['2019', '03', '28']
-    '''
-    timestamp = int((datetime.datetime(year, month, day, 0, 0).timestamp() * 1000))
-    date = datetime.date(year, month, day)
-    last_week = date - timedelta(7)
-    dt = str(last_week).split('-')
-    week_prior_timestamp = int((datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), 0, 0).timestamp() * 1000))
-    
-    print(f"7 days prior is {dt[1]} {dt[2]} {dt[0]}")
-    print(f"The first timestamp is {timestamp}, and one week prior is {week_prior_timestamp}")
-    print(f"The difference between the two timestamps is {timestamp - week_prior_timestamp}")
-    return ''
+##def time_diff(year, month, day):
+##    '''
+##    subtract the current date by 7 days.
+##    dt = date.today() - timedelta(7)
+##    >>>dt
+##    datetime.date(2019, 4, 3)
+##    >>>str(dt).split('-')
+##    ['2019', '04', '03']
+##
+##    >>>str(date.today()).split('-')
+##    ['2019', '04', '04']
+##    >>>str(date.today() - timedelta(7)).split('-')
+##    ['2019', '03', '28']
+##    '''
+##    timestamp = int((datetime.datetime(year, month, day, 0, 0).timestamp() * 1000))
+##    date = datetime.date(year, month, day)
+##    last_week = date - timedelta(7)
+##    dt = str(last_week).split('-')
+##    week_prior_timestamp = int((datetime.datetime(int(dt[0]), int(dt[1]), int(dt[2]), 0, 0).timestamp() * 1000))
+##    
+##    print(f"7 days prior is {dt[1]} {dt[2]} {dt[0]}")
+##    print(f"The first timestamp is {timestamp}, and one week prior is {week_prior_timestamp}")
+##    print(f"The difference between the two timestamps is {timestamp - week_prior_timestamp}")
+##    return ''
+
 
 
