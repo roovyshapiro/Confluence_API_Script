@@ -83,42 +83,7 @@ def conf_test():
 ##    data['changeSets'][0]['recentUpdates'][0]['urlPath'] = Link to the page
 ##    data['changeSets'][0]['recentUpdates'][0]['lastModificationDate'] = Update Time
 
-    '''
-    #write json data to a file
-    import json
-    myjson = json.dumps(data)
-    with open('dict.json', 'w') as f:
-        f.write(myjson)
 
-    #read json data from file
-    import json
-    with open('dict.json') as f:
-        data = json.load(f)
-
-    #write mod_dates one on each line to a csv file
-    with open('output.csv','w', newline='') as f:
-        writer=csv.writer(f)
-            for x in mod_dates:
-                writer.writerow([epoch_covert(x))])
-
-    with open('mod_dates.csv', 'w') as f:
-        for x in mod_dates:
-            f.write(str(x))
-            f.write('\n')
-
-    >>> mod_dates_prev = []
-                               
-    with open('output.csv') as f:
-        reader = f.read().splitlines()
-            for row in reader:
-                mod_dates_prev.append(row)
-
-        #get a list of all the modification dates:
-        mod_dates = []
-        for x in range(len(data['changeSets'])):
-            for y in range(len(data['changeSets'][x]['recentUpdates'])):
-                mod_dates.append(data['changeSets'][x]['recentUpdates'][y]['lastModificationDate'])
-    '''
     #read json data from file (used as a test instead of calling the api)
     host = "companyurl.atlassian.net"
     with open('dict.json') as f:
@@ -145,39 +110,67 @@ def conf_test():
     for x in mod_dates:
         if str(x) not in mod_dates_prev:
             missing_mod_dates.append(x)
-    print(missing_mod_dates)    
+    #print(missing_mod_dates)    
     
     my_dict = {}
     with open('test.txt', 'a') as f:
+        companies = []
+        urls = []
+        times = []
+        names = []
         for x in range(len(data['changeSets'])):
-            name = data['changeSets'][x]['modifier']['fullName'] + ":"
-            #f.write(name)
-            #f.write('\n')
-            my_dict[name]
-            total_updates = 0
             for y in range(len(data['changeSets'][x]['recentUpdates'])):
                 if data['changeSets'][x]['recentUpdates'][y]['lastModificationDate'] in missing_mod_dates:
-                    total_updates += 1
-                    company = data['changeSets'][x]['recentUpdates'][y]['spaceName']
-                    url = host + data['changeSets'][x]['recentUpdates'][y]['urlPath']
-                    time = data['changeSets'][x]['recentUpdates'][y]['lastModificationDate']
+                    names.append(data['changeSets'][x]['modifier']['fullName'])
+                    companies.append(data['changeSets'][x]['recentUpdates'][y]['spaceName'])                   
+                    urls.append(host + data['changeSets'][x]['recentUpdates'][y]['urlPath'])                   
+                    times.append(epoch_convert(data['changeSets'][x]['recentUpdates'][y]['lastModificationDate']))
+
+
+##Create the following dictionary:"
+##    {
+##      user 1
+##		{
+##		name = user 1
+##		companies = [],
+##		urls = [],
+##		times = [],
+##		}
+##	user 2
+##		{
+##		name = user 2
+##		companies = [],
+##		urls = [],
+##		times = []
+##		}
+##      user 3 etc..
+##    }
+##
+##        
+##        my_dict = {i:0 for i in list(set(names))}
+##        print(my_dict)
+##        for the_name in names:
+##                my_dict[the_name] = my_dict[the_name] + 1
+##        print(my_dict)
+##
+##        data_dict = {}
+##        for x in my_dict:
+##            data_dict[x] = {}
+##            data_dict[x]['name'] = x
+##            data_dict[x]['companies'] = []
+##            data_dict[x]['urls'] = []
+##            data_dict[x]['times'] = []
+##            for y in range(len(names)):
+##                if names[y] == data_dict[x]['name']:
+##                    data_dict[x]['companies'].append(companies[y])
+##                    data_dict[x]['urls'].append(urls[y])
+##                    data_dict[x]['times'].append(times[y])
+##
+##    data_dict_json = json.dumps(data_dict)
+##    with open('data_dict.json', 'w') as f:
+##        f.write(data_dict_json)                
                     #my_dict[name].append(company)
                     #my_dict[name].append(url)
-                    my_dict[name].append(epoch_convert(time))
-                            
-##                    f.write(name)
-##                    f.write('\n')
-##                    f.write(company)
-##                    f.write('\n')
-##                    f.write(url)
-##                    f.write('\n')
-##                    f.write(epoch_convert(time))
-##                    f.write('\n\n')
-##            f.write("Total Updates: " + str(total_updates))
-##            f.write('\n')
-##            f.write('\n')
-    print(my_dict)
-
 
     with open('mod_dates.txt', 'w') as f:
         for x in mod_dates:
