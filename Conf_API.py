@@ -19,24 +19,7 @@ def epoch_convert(timestamp):
 
 def conf_test():
     '''
-    Outpus the following data to a file:
-
-    Test User:
-    TestCompany
-    (host)/wiki/spaces/TestCompany/pages/773095435
-    2019-04-04 13:18:02
-    TestCompany1
-    (host)/wiki/spaces/TestCompany1/pages/930316631
-    2019-04-04 13:07:44
-    TestCompany2
-    (host)/wiki/spaces/TestCompany2/pages/930316651
-    2019-04-04 13:05:17
-    TestCompany3
-    (host)/wiki/spaces/TestCompany3/pages/466616422/
-    2019-04-04 13:03:41
-    Total Updates: 4
-
-    
+  
     host = "companyurl.atlassian.net"
     username = "user@companyurl.com"
     api_key = "padVOcwy3jty3O2BsyNHxSI5"
@@ -127,6 +110,16 @@ def conf_test():
                     times.append(epoch_convert(data['changeSets'][x]['recentUpdates'][y]['lastModificationDate']))
 
 
+
+    with open('mod_dates.txt', 'w') as f:
+        for x in mod_dates:
+            f.write(str(x))
+            f.write('\n')
+
+    return ''
+
+conf_test()
+
 ##Create the following dictionary:"
 ##    {
 ##      user 1
@@ -172,14 +165,6 @@ def conf_test():
                     #my_dict[name].append(company)
                     #my_dict[name].append(url)
 
-    with open('mod_dates.txt', 'w') as f:
-        for x in mod_dates:
-            f.write(str(x))
-            f.write('\n')
-
-    return ''
-
-conf_test()
 
 ##def time_diff(year, month, day):
 ##    '''
