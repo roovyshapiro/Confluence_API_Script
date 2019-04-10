@@ -36,7 +36,7 @@ def get_conf_update():
         data = json.load(f)    
     '''
   
-    host = "companyurl.atlassian.net"
+    host = "https://companyurl.atlassian.net"
     username = "user@companyurl.com"
     api_key = "padVOcwy3jty3O2BsyNHxSI5"
     
@@ -60,8 +60,6 @@ def check_previous_entries():
     been 5 new entries since the last time we called and we don't want to write all 100
     to a file resulting in a lot of duplicate entries.
     Consdier this program might be run as often as every two hours.
-
-    TODO: Need to read the csv file in reverse.
     '''
     try:
         with open('confluence_updates.csv') as f:
@@ -74,7 +72,8 @@ def check_previous_entries():
     with open('confluence_updates.csv') as f:
         csv_reader = csv.reader(f)
         mod_dates_prev = []
-        for row in csv_reader:
+        #Read the CSV file in reverse so that we're checking against new entries.:
+        for row in reversed(list(csv.reader(f))):
             if row[0] == 'NAME':
                 continue
             mod_dates_prev.append(str(row[3]))
