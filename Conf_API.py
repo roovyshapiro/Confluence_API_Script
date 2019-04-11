@@ -120,7 +120,18 @@ def confluence_to_csv():
                 urls.append(host + data['changeSets'][x]['recentUpdates'][y]['urlPath'])                   
                 times.append(epoch_convert(data['changeSets'][x]['recentUpdates'][y]['lastModificationDate']))
                 mod_dates.append(data['changeSets'][x]['recentUpdates'][y]['lastModificationDate'])
-
+    
+    #The API returns the lists with the most recent update first. However,
+    #we want to append the most recent update to the end of the csv file.
+    #We therefore have to reverse all the lists we acquired from the API.
+    names.reverse()
+    email_addresses.reverse()
+    companies.reverse()
+    titles.reverse()
+    urls.reverse()
+    times.reverse()
+    mod_dates.reverse()
+                
     with open('confluence_updates.csv', 'a', newline = '') as f:
         csv_writer = csv.writer(f)
         for x in range(len(companies)):
