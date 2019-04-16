@@ -1,7 +1,7 @@
 ##https://currentmillis.com/ -> Useful site for time conversions
 ##https://jsonformatter.org/json-viewer -> Useful site for parsing JSON
 
-import requests, json, datetime, csv
+import requests, json, datetime, csv, sqlite3
 from datetime import date, timedelta
 from requests.auth import HTTPBasicAuth
 
@@ -13,7 +13,7 @@ def epoch_convert(timestamp):
     2019-04-02 10:25:25
     '''
     time_format = "%Y-%m-%d %H:%M:%S"
-    date_time = datetime.datetime.fromtimestamp(float(timestamp)/1000.)
+    date_time = datetime.datetime.fromtimestamp(float(timestamp)/1000)
     return date_time.strftime(time_format) 
 
 
@@ -131,11 +131,26 @@ def confluence_to_csv():
     urls.reverse()
     times.reverse()
     mod_dates.reverse()
-                
+
+    #Write all new updates to a csv file
     with open('confluence_updates.csv', 'a', newline = '') as f:
         csv_writer = csv.writer(f)
         for x in range(len(companies)):
             csv_writer.writerow([names[x], email_addresses[x], times[x], mod_dates[x], companies[x], titles[x], urls[x],])
     return ''
+
+    #Connect to database, if it doesn't exist it will be created
+    conn = sqlite3.connect('Confluence_Updates.db')
+    c = conn.cursor()
+    #If the database has no table, this will create it (This should only really execute once)
+    c.execute("CREATE TABLE IF NOT EXISTS conf_table(name TEXT,email TEXT,time TEXT,epochtime REAL,company TEXT,title TEXT,url TEXT)")
+    #Write all new updates to the database
+    for x in range(len(companies)):
+        c.execute("INSERT INTO conf_table (name,email,time,epochtime,company,title,url) VALUES (?,?,?,?,?,?,?)",
+                  (names[x], email_addresses[x], times[x], mod_dates[x], companies[x], titles[x], urls[x]))
+    #Close the connections
+    c.close()
+    conn.close()
+    
 
 confluence_to_csv()
