@@ -54,7 +54,7 @@ def check_previous_entries():
     '''
     Tries to open up confluence_updates.csv if possible to read contents.
     If it doesn't exist, it gets created with a header row.
-    Appends the most recent 100 timestamps to a list.
+    Appends the most recent 200 timestamps to a list.
     This is used to compare against the new entries received from an API.
     This is important because we get the most recent 100 updates, but there may only have
     been 5 new entries since the last time we called and we don't want to write all 100
@@ -77,7 +77,7 @@ def check_previous_entries():
             if row[0] == 'NAME':
                 continue
             mod_dates_prev.append(str(row[3]))
-            if len(mod_dates_prev) == 100:
+            if len(mod_dates_prev) == 200:
                 break
     return mod_dates_prev
 
@@ -96,7 +96,7 @@ def confluence_to_csv():
     data['changeSets'][0]['recentUpdates'][0]['lastModificationDate'] = Modified Time in Epoch Format
     epoch_convert(data['changeSets'][x]['recentUpdates'][y]['lastModificationDate'] = Takes the Epoch Time and converts to human readable
     '''
-    #First check the most recent 100 entries to compare against
+    #First check the most recent 200 entries to compare against
     mod_dates_prev = check_previous_entries()
     
     #Call the API and get back most recent 100 entries in a dictionary
