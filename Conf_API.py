@@ -35,7 +35,7 @@ def get_conf_update():
     with open('dict.json') as f:
         data = json.load(f)    
     '''
-  
+    #This needs to be changed with a valid URL, username and API key to work.
     host = "https://companyurl.atlassian.net"
     username = "user@companyurl.com"
     api_key = "padVOcwy3jty3O2BsyNHxSI5"
