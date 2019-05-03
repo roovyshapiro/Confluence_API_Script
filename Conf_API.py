@@ -137,7 +137,6 @@ def confluence_to_csv():
         csv_writer = csv.writer(f)
         for x in range(len(companies)):
             csv_writer.writerow([names[x], email_addresses[x], times[x], mod_dates[x], companies[x], titles[x], urls[x],])
-    return ''
 
     #Connect to database, if it doesn't exist it will be created
     conn = sqlite3.connect('Confluence_Updates.db')
@@ -148,9 +147,12 @@ def confluence_to_csv():
     for x in range(len(companies)):
         c.execute("INSERT INTO conf_table (name,email,time,epochtime,company,title,url) VALUES (?,?,?,?,?,?,?)",
                   (names[x], email_addresses[x], times[x], mod_dates[x], companies[x], titles[x], urls[x]))
+        conn.commit()
     #Close the connections
     c.close()
     conn.close()
+
+    return ''
     
 
 confluence_to_csv()
